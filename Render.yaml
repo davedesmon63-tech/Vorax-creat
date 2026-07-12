@@ -1,0 +1,19 @@
+services:
+  # 1. LE SERVER
+    - type: web
+    name: cvflash-server
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+            - key: PORT
+        value: 5000
+
+  # 2. LE CLIENT
+    - type: web
+    name: cvflash-client
+    env: static
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist

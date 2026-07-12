@@ -1,0 +1,52 @@
+const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const PORT = 5000;
+
+// Route test
+app.get('/', (req, res) => {
+  res.send('CVFlash Server is running 🩸🕳️');
+});
+
+// Route pour générer le CV
+app.post('/generate-cv', async (req, res) => {
+  const { nom, poste } = req.body;
+
+  // Pour l'instant on fait un PDF simple
+  // Plus tard on mettra l'IA OpenAI ici
+  
+  const doc = new PDFDocument();
+  const fileName = `CV_${nom}.pdf`;
+  
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+  
+  doc.pipe(res);
+  
+  // LOGO + TITRE
+  doc.fontSize(25).fillColor('red').text('🩸 CVFlash.ci 🕳️', { align: 'center' });
+  doc.moveDown();
+  doc.fontSize(10).fillColor('black').text('Created by Shanks Vorax', { align: 'center' });
+  doc.moveDown(2);
+  
+  // CONTENU
+  doc.fontSize(18).text(`CV de ${nom}`);
+  doc.fontSize(14).text(`Poste: ${poste}`);
+  doc.moveDown();
+  doc.fontSize(12).text('Expérience, Compétences, Formation...');
+  doc.moveDown();
+  doc.text('Ceci est un CV généré par CVFlash.ci');
+  
+  doc.end();
+});
+
+app.listen(PORT, () => {
+  console.log(`Serveur lancé sur http://localhost:${PORT}`);
+});
